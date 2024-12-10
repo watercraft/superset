@@ -139,7 +139,7 @@ RUN --mount=type=bind,source=./docker,target=/docker \
 COPY --chown=superset:superset --from=superset-node /app/superset/static/assets superset/static/assets
 
 # Copy the main Superset source code
-COPY --chown=superset:superset superset superset
+COPY --chown=superset:superset ./ superset
 
 # Install Superset itself using docker/pip-install.sh
 RUN --mount=type=bind,source=./docker,target=/docker \
