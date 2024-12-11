@@ -24,6 +24,7 @@ import {
 } from '@superset-ui/core';
 import { Tooltip } from 'src/components/Tooltip';
 import { Avatar } from 'src/components';
+// import { ensureBasePath } from 'src/utils/pathUtils';
 import { getRandomColor } from './utils';
 
 interface FacePileProps {

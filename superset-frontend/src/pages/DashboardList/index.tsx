@@ -67,6 +67,7 @@ import DashboardCard from 'src/features/dashboards/DashboardCard';
 import { DashboardStatus } from 'src/features/dashboards/types';
 import { UserWithPermissionsAndRoles } from 'src/types/bootstrapTypes';
 import { findPermission } from 'src/utils/findPermission';
+import { ensureBasePath } from 'src/utils/pathUtils';
 import { ModifiedInfo } from 'src/components/AuditInfo';
 
 const PAGE_SIZE = 25;
@@ -655,7 +656,7 @@ function DashboardList(props: DashboardListProps) {
       ),
       buttonStyle: 'primary',
       onClick: () => {
-        window.location.assign('/dashboard/new');
+        window.location.assign(ensureBasePath('/dashboard/new'));
       },
     });
 

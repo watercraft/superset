@@ -37,6 +37,7 @@ from flask import (
     Response,
     send_file,
     session,
+    url_for
 )
 from flask_appbuilder import BaseView, Model, ModelView
 from flask_appbuilder.actions import action
@@ -344,7 +345,7 @@ def menu_data(user: User) -> dict[str, Any]:
     return {
         "menu": appbuilder.menu.get_data(),
         "brand": {
-            "path": appbuilder.app.config["LOGO_TARGET_PATH"] or "/superset/welcome/",
+            "path": appbuilder.app.config["LOGO_TARGET_PATH"] or url_for("Superset.welcome"),
             "icon": appbuilder.app_icon,
             "alt": appbuilder.app_name,
             "tooltip": appbuilder.app.config["LOGO_TOOLTIP"],

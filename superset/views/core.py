@@ -24,7 +24,7 @@ from typing import Any, Callable, cast
 from urllib import parse
 
 import simplejson as json
-from flask import abort, flash, g, redirect, render_template, request, Response
+from flask import abort, flash, g, redirect, render_template, request, url_for, Response
 from flask_appbuilder import expose
 from flask_appbuilder.security.decorators import (
     has_access,
@@ -136,11 +136,11 @@ class Superset(BaseSupersetView):  # pylint: disable=too-many-public-methods
         if not slc:
             abort(404)
         form_data = parse.quote(json.dumps({"slice_id": slice_id}))
-        endpoint = f"/explore/?form_data={form_data}"
+        endpoint_params = {"form_data": f"{form_data}"}
 
         if ReservedUrlParameters.is_standalone_mode():
-            endpoint += f"&{ReservedUrlParameters.STANDALONE}=true"
-        return redirect(endpoint)
+            endpoint_params[ReservedUrlParameters.STANDALONE] = "true"
+        return redirect(url_for("ExploreView.root", **endpoint_params))
 
     def get_query_string_response(self, viz_obj: BaseViz) -> FlaskResponse:
         query = None
@@ -381,7 +381,7 @@ class Superset(BaseSupersetView):  # pylint: disable=too-many-public-methods
                 )
             if success:
                 flash("Dashboard(s) have been imported", "success")
-                return redirect("/dashboard/list/")
+                return redirect(url_for("DashboardModelView.list"))
 
         databases = db.session.query(Database).all()
         return self.render_template(
@@ -467,7 +467,7 @@ class Superset(BaseSupersetView):  # pylint: disable=too-many-public-methods
                     )
             except (ChartNotFoundError, ExplorePermalinkGetFailedError) as ex:
                 flash(__("Error: %(msg)s", msg=ex.message), "danger")
-                return redirect("/chart/list/")
+                return redirect(url_for("SliceModelView.list"))
         elif form_data_key:
             parameters = CommandParameters(key=form_data_key)
             value = GetFormDataCommand(parameters).run()
@@ -839,7 +839,7 @@ class Superset(BaseSupersetView):  # pylint: disable=too-many-public-methods
             dashboard.raise_for_access()
         except SupersetSecurityException as ex:
             return redirect_with_flash(
-                url="/dashboard/list/",
+                url= url_for("DsahboardModelView.list")
                 message=utils.error_msg_from_exception(ex),
                 category="danger",
             )
@@ -879,11 +879,13 @@ class Superset(BaseSupersetView):  # pylint: disable=too-many-public-methods
             value = GetDashboardPermalinkCommand(key).run()
         except DashboardPermalinkGetFailedError as ex:
             flash(__("Error: %(msg)s", msg=ex.message), "danger")
-            return redirect("/dashboard/list/")
+            return redirect(url_for("DashboardModelView.list"))
         if not value:
             return json_error_response(_("permalink state not found"), status=404)
         dashboard_id, state = value["dashboardId"], value.get("state", {})
-        url = f"/superset/dashboard/{dashboard_id}?permalink_key={key}"
+        url = url_for(
+            "Superset.dashboard", dashboard_id_or_slug=dashboard_id, permalink_key=key
+        )
         if url_params := state.get("urlParams"):
             params = parse.urlencode(url_params)
             url = f"{url}&{params}"
@@ -994,4 +996,4 @@ class Superset(BaseSupersetView):  # pylint: disable=too-many-public-methods
     @expose("/sqllab/history/", methods=("GET",))
     @deprecated(new_target="/sqllab/history")
     def sqllab_history(self) -> FlaskResponse:
-        return redirect("/sqllab/history")
+        return redirect(url_for("SqllabView.history"))

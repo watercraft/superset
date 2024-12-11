@@ -19,7 +19,7 @@ import json
 import re
 from typing import Callable, Union
 
-from flask import g, redirect, request, Response
+from flask import g, redirect, request, url_for, Response
 from flask_appbuilder import expose
 from flask_appbuilder.actions import action
 from flask_appbuilder.models.sqla.interface import SQLAInterface
@@ -70,8 +70,7 @@ class DashboardModelView(
     ) -> FlaskResponse:
         if not isinstance(items, list):
             items = [items]
-        ids = "".join(f"&id={d.id}" for d in items)
-        return redirect(f"/dashboard/export_dashboards_form?{ids[1:]}")
+        return redirect(url_for("DashboardModelView.download_dashboards", id=items))
 
     @event_logger.log_this
     @has_access
@@ -85,7 +84,7 @@ class DashboardModelView(
                 mimetype="application/text",
             )
         return self.render_template(
-            "superset/export_dashboards.html", dashboards_url="/dashboard/list"
+            "superset/export_dashboards.html", dashboards_url=url_for("DashboardModelView.list")
         )
 
     def pre_add(self, item: "DashboardModelView") -> None:
@@ -122,7 +121,7 @@ class Dashboard(BaseSupersetView):
         )
         db.session.add(new_dashboard)
         db.session.commit()
-        return redirect(f"/superset/dashboard/{new_dashboard.id}/?edit=true")
+        return redirect(url_for("Superset.dashboard", dashboard_id_or_slug=new_dashboard.id, edit=True))
 
     @expose("/<dashboard_id_or_slug>/embedded")
     @event_logger.log_this_with_extra_payload

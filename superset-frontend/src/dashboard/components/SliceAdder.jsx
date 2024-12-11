@@ -28,6 +28,7 @@ import { Select } from 'src/components';
 import Loading from 'src/components/Loading';
 import Button from 'src/components/Button';
 import Icons from 'src/components/Icons';
+import { ensureBasePath } from 'src/utils/pathUtils';
 import {
   LocalStorageKeys,
   getItem,
@@ -333,7 +334,9 @@ class SliceAdder extends React.Component {
             buttonSize="xsmall"
             onClick={() =>
               window.open(
-                `/chart/add?dashboard_id=${this.props.dashboardId}`,
+                ensureBasePath(
+                  `/chart/add?dashboard_id=${this.props.dashboardId}`,
+                ),
                 '_blank',
                 'noopener noreferrer',
               )
