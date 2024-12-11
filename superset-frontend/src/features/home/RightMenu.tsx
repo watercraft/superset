@@ -46,6 +46,7 @@ import {
 import { RootState } from 'src/dashboard/types';
 import DatabaseModal from 'src/features/databases/DatabaseModal';
 import { uploadUserPerms } from 'src/views/CRUD/utils';
+import { ensureBasePath } from 'src/utils/pathUtils';
 import LanguagePicker from './LanguagePicker';
 import {
   ExtensionConfigs,
@@ -177,7 +178,7 @@ const RightMenu = ({
         {
           label: t('Create dataset'),
           name: GlobalMenuDataOptions.DATASET_CREATION,
-          url: '/dataset/add/',
+          url: ensureBasePath('/dataset/add/'),
           perm: canDataset && nonExamplesDBConnected,
         },
         {
@@ -210,7 +211,7 @@ const RightMenu = ({
     },
     {
       label: t('SQL query'),
-      url: '/sqllab?new=true',
+      url: ensureBasePath('/sqllab/?new=true'),
       icon: 'fa-fw fa-search',
       perm: 'can_sqllab',
       view: 'Superset',
@@ -226,7 +227,7 @@ const RightMenu = ({
     },
     {
       label: t('Dashboard'),
-      url: '/dashboard/new',
+      url: ensureBasePath('/dashboard/new'),
       icon: 'fa-fw fa-dashboard',
       perm: 'can_write',
       view: 'Dashboard',
