@@ -839,7 +839,7 @@ class Superset(BaseSupersetView):  # pylint: disable=too-many-public-methods
             dashboard.raise_for_access()
         except SupersetSecurityException as ex:
             return redirect_with_flash(
-                url= url_for("DsahboardModelView.list")
+                url= url_for("DsahboardModelView.list"),
                 message=utils.error_msg_from_exception(ex),
                 category="danger",
             )
