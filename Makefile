@@ -115,3 +115,6 @@ report-celery-beat:
 
 admin-user:
 	superset fab create-admin
+
+build:
+	DOCKER_BUILDKIT=1 docker build --ssh default . -t watercraft/superset:$(shell date '+%Y%m%d%H%M%S')
